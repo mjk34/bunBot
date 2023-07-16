@@ -42,4 +42,4 @@ async def faq(ctx):
     )
     embed.set_footer(text='@~ powered by UwUntu')
     await ctx.author.send(embed=embed)
-    await ctx.reply(f'<@{ctx.author.id}> I\'ve forwarded the detes to your DM')
+    await ctx.send(f'<@{ctx.author.id}> I\'ve forwarded the detes to your DM')
