@@ -46,7 +46,7 @@ async def on_message(message):
             await reply.edit(content=gpt_str)
             return
         
-        keywords = ['collab', 'collaborate', 'direct message', 'dm', 'dms', 'promo', 'promotion']
+        keywords = ['collab', 'collaborate', 'direct message', 'dm ', 'dms ', 'promo', 'promotion']
         for i in keywords:
             if i in content.lower():
                 text = await gpt_string('', 'Give me a random fortune')
