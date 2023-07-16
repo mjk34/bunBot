@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from discord.ext.commands import Bot
 from discord_slash import SlashCommand, SlashContext
 
-from commands.cmd import ping, anime
+from commands.cmd import ping, anime, faq
 from commands.gpt import gpt_string
 
 load_dotenv()
@@ -13,6 +13,7 @@ GUILD = os.getenv('DISCORD_GUILD')
 GUILD_ID = int(os.getenv('GUILD_ID'))
 
 CHANNEL = int(os.getenv('BOT_CMD'))
+CHANNEL2= int(os.getenv('FLORAL'))
 
 client = Bot(command_prefix='!', intents=discord.Intents.all())
 slash = SlashCommand(client, sync_commands=True)
@@ -26,7 +27,7 @@ async def on_ready(): await client.change_presence(activity=discord.Game('/uwu f
 async def on_message(message):
     if message.author == client.user: return                # checks if professor
 
-    if message.channel.id == CHANNEL:
+    if message.channel.id == CHANNEL or message.channel.id == CHANNEL2:
         content = message.content
         temp_msg = ['Typing...', 'Ummm...', 'Hmmm...', 'Thinking...']
         msg = random.randint(0, 3)
@@ -34,9 +35,6 @@ async def on_message(message):
         ping = '<@1128015416837558372>'
         token = 'hey bunbot'
         if ping in content:
-                # add in prompt detection
-
-                # this is the else if no prompts are detected
                 reply = await message.reply(f'{temp_msg[msg]}')
                 gpt_str = await gpt_string('', content[len(token):])
                 await reply.edit(content=gpt_str)
@@ -47,6 +45,14 @@ async def on_message(message):
             gpt_str = await gpt_string('', content[len(token):])
             await reply.edit(content=gpt_str)
             return
+        
+        keywords = ['collab', 'collaborate', 'direct message', 'dm', 'dms', 'promo', 'promotion']
+        for i in keywords:
+            if i in content.lower():
+                text = await gpt_string('', 'Give me a random fortune')
+                text += '\n\nHeya, BunBot noticed you messaged about either collabs, dms or promotions. If you still had questions try `/faq` to see what Bunbun says.'
+                await message.reply(text)
+                return
         
         try:
             m_id = message.reference.message_id
@@ -70,5 +76,8 @@ async def _(ctx:SlashContext): await ping(ctx)
 
 @slash.slash(name='anime', description="Check AniList for Simulcast shows", guild_ids=[GUILD_ID])
 async def _(ctx:SlashContext): await anime(ctx)
+
+@slash.slash(name='faq', description="Check commonly asked questions and responses", guild_ids=[GUILD_ID])
+async def _(ctx:SlashContext): await faq(ctx)
 
 client.run(TOKEN)
