@@ -43,16 +43,9 @@ async def on_message(message):
                 return
         
         if token in content.lower():
-            print(f'Hey Professor: \"{content}\"')
             reply = await message.reply(f'{temp_msg[msg]}')
             gpt_str = await gpt_string('', content[len(token):])
             await reply.edit(content=gpt_str)
-            return
-        
-        if random.random() < 0.50 and '?' in content:
-            print(f'Random Professor: \"{content}\"')
-            gpt_str = await gpt_string('', content[len(token):])
-            await client.get_channel(CHANNEL).send(gpt_str)
             return
         
         try:
